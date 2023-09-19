@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Canvas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      canvas {
+        background: #eee;
+        border: 1px solid red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas class="canvas" width="600" height="400">이 브라우저는 캔버스를 지원하지 않습니다.</canvas>
+
+    <script>
+      // get Canvas
+      function 라디안(각도) {
+        return 각도 * Math.PI / 180;
+      }
+      const canvas = document.querySelector('.canvas');
+      // 그림을 그릴때에는 context를 가져와서 그림을 그림
+      const context = canvas.getContext('2d');
+      
+      context.fillStyle = '#f00'; // 붓에다 물감을 찍음
+      context.fillRect(50,50,100,100); // 붓으로 사각형을 그림
+      
+      // 색상 넣기
+      context.fillStyle = '#2d63e2'; // 붓에다 물감을 찍음
+      // fillRect(x, y, width, height)
+      context.fillRect(0,0,100,100); // 붓으로 사각형을 그림
+      
+      // clearRect
+      context.clearRect(80,80,50,50); // 지우개
+      // strokeRect
+      context.strokeRect(100,100,150,150); // 테두리로 사각형 그리기
+
+      context.beginPath(); // 붓을 잡음
+      context.moveTo(100,100); // 붓을 그 위치로 올림
+      context.lineTo(200,200); // 붓을 그 위치로 옮김
+      context.stroke(); // 붓을 내리고 그림
+      context.closePath(); // 붓을 떼는 것
+
+      context.beginPath();
+      context.arc(300, 200, 50, 0, 라디안(360), false); 
+      context.fill();
+      context.beginPath();
+      context.arc(500, 100, 50, 0, 라디안(180), true); 
+      context.stroke();
+
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
