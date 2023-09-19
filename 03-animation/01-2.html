@@ -18,15 +18,39 @@
     <script>
       const canvas = document.querySelector('.canvas');
       const context = canvas.getContext('2d');
-      
+      let xPos = 10;
       function toRadian(degree) {
         return degree * Math.PI / 180;
       }
 
       function draw() {
-        context.arc(10, 150, 5, 0, Math.PI*2, true);
+        context.clearRect(0,0,canvas.width,canvas.height);
+        
+        context.beginPath();
+        context.fillStyle = '#f00';
+        context.arc(xPos, 150, 5, 0, Math.PI*2, true);
+        context.fill();
+        
+        context.beginPath();
+        context.fillStyle = '#f41';
+        context.arc(xPos + 30, 150, 5, 0, Math.PI*2, true);
+        context.fill();
+        
+        context.beginPath();
+        context.fillStyle = '#00f';
+        context.arc(xPos + 60, 150, 5, 0, Math.PI*2, true);
+        context.fill();
+        
+        xPos += 3;
+        if(xPos > canvas.width) {
+          xPos = 10;
+        }
+        
+        // 그릴 수 있을 때 까지 기다렸다가 그리게 만들어 줌
+        // 60분의 1초 속도로 그림을 그림
+        requestAnimationFrame(draw);
       }
-      
+      draw();
     </script>
   </body>
 </html>
