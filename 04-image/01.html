@@ -19,14 +19,12 @@
       const canvas = document.querySelector('.canvas');
       const context = canvas.getContext('2d');
 
-      // const imgElem = document.createElement('img');
-      const imgElem = new Image();
-      imgElem.src = '../images/ilbuni1.png';
-      imgElem.addEventListener('load', () => {
-        context.drawImage(imgElem, 50, 50);
-        context.drawImage(imgElem, 50, 50, 70, 120);
-        context.drawImage(imgElem, 100, 100, 200, 200, 0, 0, 100, 100);
-      });
+      const imageEl = new Image();
+      imageEl.src = '../images/ilbuni1.png';
+      imageEl.addEventListener('load', () => {
+        context.drawImage(imageEl, 50, 50,150,150);
+        context.drawImage(imageEl, 100, 100, 100, 100, 200, 0 , 100, 100)
+      })
     </script>
   </body>
 </html>

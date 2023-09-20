@@ -5,98 +5,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+      body {
+        position:relative;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      .canvas-wrapper {
+        position:relative;
+        width: 600px;
+        height: 400px;
+        margin: 0 auto;
+        padding: 0;
+        border: 3px solid #2d63e2;
+      }
       canvas {
+        position:absolute;
         background: #eee;
       }
-      .color-btn {
-        width: 30px;
-        height: 30px;
-        border: 0;
-        border-radius: 50%;
+      .button-group {
+        margin-top: 1rem;
+        padding: 0 6px;
+        bottom: 0;
+        left: 100px;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+
       }
-      .color-btn[data-color='black'] { background: black; }
-      .color-btn[data-color='red'] { background: red; }
-      .color-btn[data-color='green'] { background: green; }
-      .color-btn[data-color='blue'] { background: blue; }
-      .image-btn {
-        width: 40px;
-        height: 40px;
-        background: url(../images/ilbuni2.png) no-repeat 50% 50% / cover;
+      .palette {
+        width: 80px;
+        height: 80px;
+        border-radius: 100%;
       }
-      .result-image {
-        
+      .clear-button {
+        background-color: #fff;
       }
+      .red {
+        background-color: #ff0000;
+      }
+      .blue {
+        background-color: #0000ff;
+      }
+      .green {
+        background-color: #00ff00;
+      }
+      .yellow {
+        background-color: #ffff00;
+      }
+      .black {
+        background-color: #000;
+      }
+      .white {
+        background-color: #fff;
+      }
+      .purple {
+        background-color: #800080;
+      }
+      .image {
+        background-image: url('../images/ilbuni1.png');
+        background-size: cover;
+        background-position: center;
+      }
+      .capture-image {
+        margin: 0 auto; 
+        width: 200px; 
+        height: 200px;
+      }
+
     </style>
   </head>
 
   <body>
     <h1>Image</h1>
-    <canvas class="canvas" width="600" height="400">이 브라우저는 캔버스를 지원하지 않습니다.</canvas>
-    <div class="control">
-      <button class="color-btn" data-type="color" data-color="black"></button>
-      <button class="color-btn" data-type="color" data-color="red"></button>
-      <button class="color-btn" data-type="color" data-color="green"></button>
-      <button class="color-btn" data-type="color" data-color="blue"></button>
-      <button class="image-btn" data-type="image"></button>
+    <button class="save-button">이미지 저장</button>
+    
+    <div class="canvas-wrapper">
+      <canvas class="canvas" width="600" height="400">이 브라우저는 캔버스를 지원하지 않습니다.</canvas>
     </div>
-    <button class="save-btn">이미지 저장</button>
-    <div class="result-image"></div>
-
+    <div class="button-group">
+      <button class="palette clear-button">clear</button>
+      <button class="palette red"></button>
+      <button class="palette blue"></button>
+      <button class="palette yellow"></button>
+      <button class="palette green"></button>
+      <button class="palette black"></button>
+      <button class="palette purple"></button>
+      <button class="palette white"></button>
+      <button class="palette image" data-type="image"></button>
+    </div>
+    <div class="capture-image"></div>
     <script>
       const canvas = document.querySelector('.canvas');
       const context = canvas.getContext('2d');
-      const control = document.querySelector('.control');
-      const saveBtn = document.querySelector('.save-btn');
-      const resultImage = document.querySelector('.result-image');
-      let drawingMode; // true일 때만 그리기
-      let brush = 'color'; // 'color', 'image'
-      let colorVal = 'black'; // 색상
+      const clearButton = document.querySelector('.clear-button');
+      const colorButtons = document.querySelectorAll('.palette');
+      const imgEl = document.createElement('img')
+      imgEl.src = '../images/ilbuni1.png';
+      const saveButton = document.querySelector('.save-button');
+      const captureImage = document.querySelector('.capture-image');
+      let drawingMode;
+      let brush = 'color'; // 'color' or 'image'
+      let paletteColor = '#000';
 
-      const imgElem = new Image();
-      imgElem.src = '../images/ilbuni2.png';
+      function clickHandler(e) {
+        if(!drawingMode) return;
+        // clientX,Y는 브라우저의 왼쪽 상단을 기준으로 한 좌표
+        // offsetX,Y는 이벤트가 발생한 엘리먼트의 왼쪽 상단을 기준으로 한 좌표
+        // layerX,Y는 이벤트가 발생한 엘리먼트의 왼쪽 상단을 기준으로 한 좌표
+        if(brush === 'image') {
+          context.drawImage(imgEl, e.layerX, e.layerY, 100, 100);
+          return;
+        }
+        context.beginPath();
+        context.arc(e.layerX,e.layerY, 10, 0, Math.PI*2, false);
+        context.fill();
+      }
 
-      function downHandler() {
+      function downHandler(e) {
         drawingMode = true;
       }
 
-      function upHandler() {
+      function chooseColorHandler(e) {
+        paletteColor = document.defaultView.getComputedStyle(this).backgroundColor;
+        brush = e.target.getAttribute('data-type');
+        context.fillStyle = paletteColor;
+      }
+
+      function upHandler(e) {
         drawingMode = false;
       }
 
-      function moveHandler(이벤트) {
-        if (!drawingMode) return;
-
-        switch (brush) {
-          case 'color':
-            context.beginPath();
-            context.arc(이벤트.layerX, 이벤트.layerY, 10, 0, Math.PI*2, false);
-            context.fill();
-            break;
-          case 'image':
-            context.drawImage(imgElem, 이벤트.layerX, 이벤트.layerY, 50, 50);
-            break;
-        }
+      function clearHandler() {
+        context.clearRect(0,0,canvas.width, canvas.height);
       }
-
-      function setColor(이벤트) {
-        brush = 이벤트.target.getAttribute('data-type');
-        colorVal = 이벤트.target.getAttribute('data-color');
-        context.fillStyle = colorVal;
-        console.log(brush);
-      }
-
       function createImage() {
         const url = canvas.toDataURL('image/png');
-        const imgElem = new Image();
-        imgElem.src = url;
-        resultImage.appendChild(imgElem);
+        const imgEl = document.createElement('img');
+        imgEl.src = url;
+        imgEl.classList.add('capture-image');
+        captureImage.appendChild(imgEl);
       }
 
-      canvas.addEventListener('mousedown', downHandler);
-      canvas.addEventListener('mousemove', moveHandler);
-      canvas.addEventListener('mouseup', upHandler);
-      control.addEventListener('click', setColor);
-      saveBtn.addEventListener('click', createImage);
+      canvas.addEventListener('mousedown', downHandler)
+      canvas.addEventListener('mousemove', clickHandler)
+      canvas.addEventListener('mouseup', upHandler)
+      
+      clearButton.addEventListener('click', clearHandler)
+
+      colorButtons.forEach(button => {
+        button.addEventListener('click', chooseColorHandler.bind(button));
+      })
+      saveButton.addEventListener('click', createImage);
+
+      
     </script>
   </body>
 </html>
